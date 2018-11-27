@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta http-equiv="X-UA-Compatible" content="ie=edge">
+	<title>D3 and Scalable Vector Graphics</title>
+
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/dc/2.1.8/dc.min.css" type="text/css" />
+
+	<!--scripts order important!!!  1.D3 2.Crossfilter 3.DC-->
+	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.17/d3.min.js"></script>
+	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/crossfilter/1.3.12/crossfilter.min.js"></script>
+	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/dc/2.1.8/dc.js"></script>
+</head>
+
+<body>
+	<bottom><a href="index.html">Simple Chart</a></bottom>
+	<bottom><a href="chart1.html">3 Charts</a></bottom>
+	<bottom><a href="chart2.html">Charts with Queue</a></bottom>
+	<bottom><a href="piechart.html">Pie Chart</a></bottom>
+	<bottom><a href="graphicline.html">Line Graphic</a></bottom>
+	<bottom><a href="composedchart.html">Composed Chart</a></bottom>
+	<bottom><a href="stackedchart.html">Stacked Chart</a></bottom>
+	<bottom><a href="scatterplot.html">Scatter Plot</a></bottom>
+	<bottom><a href="scatterplot2.html">Scatter Color Plot</a></bottom>
+	<bottom><a href="datadimension.html">Data Dimension</a></bottom>
+	<bottom><a href="average.html">Average</a></bottom>
+	<br>
+	<div id="chart-here"></div>
+	<script>
+		var transactionsData = [
+			{ "name": "Tom", "store": "Acme", "state": "NY", "spend": 100 },
+			{ "name": "Tom", "store": "Big Co.", "state": "NY", "spend": 200 },
+			{ "name": "Bob", "store": "Acme", "state": "FL", "spend": 150 },
+			{ "name": "Bob", "store": "Acme", "state": "NY", "spend": 200 },
+			{ "name": "Bob", "store": "Big Co.", "state": "FL", "spend": 50 },
+			{ "name": "Bob", "store": "Big Co.", "state": "NY", "spend": 75 },
+			{ "name": "Alice", "store": "Acme", "state": "FL", "spend": 200 },
+			{ "name": "Alice", "store": "Big Co.", "state": "NY", "spend": 350 },
+		];
+		var ndx = crossfilter(transactionsData); //ndx is for convention
+		var name_dim = ndx.dimension(dc.pluck('name')); // a dimension is a column of data, here we take the x vaues
+		var total_spend_per_person = name_dim.group().reduceSum(dc.pluck('spend')); // here we take the y values
+		dc.barChart('#chart-here') //here we introduce the attributes of the chart
+			.width(300)
+			.height(150)
+			.margins({ top: 10, right: 50, bottom: 30, left: 50 })
+			.dimension(name_dim)
+			.group(total_spend_per_person)
+			.transitionDuration(500)
+			.x(d3.scale.ordinal())
+			.xUnits(dc.units.ordinal)
+			.xAxisLabel("Person")
+			.yAxis().ticks(4);
+
+		dc.renderAll();
+	</script>
+</body>
+
+</html>
